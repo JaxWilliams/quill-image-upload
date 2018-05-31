@@ -59,10 +59,14 @@ export class ImageUpload {
 		const url = this.options.url || 'your-url.com',
 			method = this.options.method || 'POST',
 			headers = this.options.headers || {},
+		      	data = this.options.data || {},
 			callbackOK = this.options.callbackOK || this.uploadImageCallbackOK.bind(this),
 			callbackKO = this.options.callbackKO || this.uploadImageCallbackKO.bind(this),
 			fd = new FormData();
-		fd.append('image', file);
+		fd.append('file', file);
+		for(let key in data) {
+			fd.append(key, data[key]);
+		}
 
 		const xhr = new XMLHttpRequest();
 		// init http query
