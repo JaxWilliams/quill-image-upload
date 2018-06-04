@@ -55,19 +55,19 @@ export class ImageUpload {
 	 * Send to server
 	 * @param {File} file
 	 */
-	sendToServer(file) {
+	sendToServer(file, extraData) {
 		const url = this.options.url || 'your-url.com',
 			method = this.options.method || 'POST',
 			headers = this.options.headers || {},
-		      	data = this.options.data || {},
+			data = this.options.data || {},
 			callbackOK = this.options.callbackOK || this.uploadImageCallbackOK.bind(this),
 			callbackKO = this.options.callbackKO || this.uploadImageCallbackKO.bind(this),
 			fd = new FormData();
-		fd.append('file', file);
-		for(let key in data) {
-			fd.append(key, data[key]);
-		}
 
+		for(let key in extraData) {
+			fd.append(key, extraData[key]);
+		}
+		fd.append('file', file);
 		const xhr = new XMLHttpRequest();
 		// init http query
 		xhr.open(method, url, true);
@@ -79,7 +79,7 @@ export class ImageUpload {
 		// listen callback
 		xhr.onload = () => {
 			if (xhr.status === 200) {
-				callbackOK(JSON.parse(xhr.responseText), this.insert.bind(this));
+				callbackOK(xhr.responseText, this.insert.bind(this));
 			} else {
 				callbackKO({
 					code: xhr.status,
@@ -88,7 +88,6 @@ export class ImageUpload {
 				});
 			}
 		};
-
 		xhr.send(fd);
 	}
 
